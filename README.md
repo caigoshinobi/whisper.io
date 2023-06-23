@@ -44,7 +44,7 @@ python main.py --port 1234 --library static/mybooks
 ## Import Audiobooks
 
 To import new audiobooks we have 2 choices:
-- The first option is to use the "🧞ADD" button within the web app. In this case, we need to fill out the form with the necessary information and then upload the audio file along with some cover images.
+- The first option is to use the "➕ADD" button within the web app. In this case, we need to fill out the form with the necessary information and then upload the audio file along with some cover images.
 
 - The second option, if we need to perform a mass import, is to create a new folder inside the audiobooks folder using the following structure:
 
