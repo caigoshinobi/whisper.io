@@ -22,8 +22,6 @@ To start Whisper.io, run the following command:
 python main.py
 ```
 
-This will start the web app on your local machine. You can then access the web app at http://localhost:5000.
-
 **Options:**
 
 ```
