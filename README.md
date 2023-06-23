@@ -46,7 +46,8 @@ python main.py --port 1234 --library static/mybooks
 To import new audiobooks we have 2 choices:
 - The first option is to use the "+ADD" button within the web app. In this case, we need to fill out the form with the necessary information and then upload the audio file along with some cover images.
 
-<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-3.jpg" alt="img-1" height="350">
+
+<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-3.png" alt="img-3" height="350">
 
 - The second option, if we need to perform a mass import, is to create a new folder inside the audiobooks folder using the following structure:
 
