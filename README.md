@@ -2,6 +2,8 @@
 
 Whisper.io is an audiobook library written in Flask that allows you to manage your audiobooks. 
 
+<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-2.jpg" alt="img-1" height="400">
+
 ## Features
 
 - Add & listen to your audiobooks from the web app or download them to your device;
@@ -9,8 +11,6 @@ Whisper.io is an audiobook library written in Flask that allows you to manage yo
 - Automatic bookmarks will also be applied to your audiobook while listening, so you can resume it whenever you want without losing your place.
 - It is responsive and mobile-oriented, thanks to Bootstrap.
 - Whisper.io is designed to be easy to set up on FreeBSD systems (I didn't find anything simple for my TrueNAS).
-
-<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-2.jpg" alt="img-1" height="400">
 
 ## Installation
 
