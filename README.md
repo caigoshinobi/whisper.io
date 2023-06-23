@@ -61,4 +61,4 @@ After completing the above steps, we need to start the app and click the ⚙️*
 
 ## License
 
-Whisper.io is licensed under the CC BY-NC-SA 4.0 License.
+Whisper.io is licensed under the [GPLv3](https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/LICENSE) License.
