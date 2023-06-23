@@ -22,7 +22,7 @@ To start Whisper.io, run the following command:
 python main.py
 ```
 
-**Options:**
+**Options**
 
 ```
 main.py [-h] [--library LIBRARY] [--port PORT] [-h, --help]
@@ -33,7 +33,7 @@ Options:
   -?            Show the help message and exit
 ```
 
-**Example:**
+**Example**
 
 To start Whisper.io on port 1234 and with the audiobook directory set to `static/mybooks`, run the following command:
 
