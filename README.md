@@ -2,7 +2,7 @@
 
 Whisper.io is an audiobook library written in Flask that allows you to manage your audiobooks. 
 
-<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-2.jpg" alt="img-1" height="250" width="466">
+<img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/screen-1.jpg" alt="img-1" height="250" width="466">
 
 ## Features
 
