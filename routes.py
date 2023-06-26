@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
 import os
 import random
 import json
@@ -259,3 +259,9 @@ def delete(audiobook_id):
         return jsonify({'message': 'Audiobook deleted. Please wait...'}), 200, {'Refresh': '2; url=/sync'}
     else:
         return jsonify({'message': 'Audiobook ID not found. Please wait...'}), 400, {'Refresh': '3; url=/'}
+    
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static/img'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
