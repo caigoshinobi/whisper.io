@@ -260,6 +260,7 @@ def delete(audiobook_id):
     else:
         return jsonify({'message': 'Audiobook ID not found. Please wait...'}), 400, {'Refresh': '3; url=/'}
     
+# favicon.ico
 
 @app.route('/favicon.ico')
 def favicon():
