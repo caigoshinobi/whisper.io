@@ -57,3 +57,41 @@ $('#cover').on('change', function() {
   
     $('#cover-label').text(fileNames.join(', '));
   });
+
+  let deleteMode = false;
+
+  $('#deleteButtonNav').click(function() {
+    toggleDeleteMode();
+  });
+
+  function toggleDeleteMode() {
+    deleteMode = !deleteMode;
+
+    if (deleteMode) {
+      $('#deleteButtonNav').text(' RETURN').prepend('<i style="font-size:20px;" class="bi bi-arrow-counterclockwise"></i>');
+      $('#deleteButtonNav').addClass('text-danger');
+      $('.cardButton').addClass('bg-danger text-white');
+      $('.cardButton').append('<i class="bi bi-x-circle trashLogo"></i>');
+      $('.cardButton').off('click').on('click', function(e) {
+        e.stopPropagation(); // Prevent event bubbling to the parent element
+        const bookId = $(this).data('book-id');
+        window.location.href = '/delete/' + bookId;
+      });
+    } else {
+      $('#deleteButtonNav').text(' DELETE').prepend('<i style="font-size:20px;" class="bi bi-x-circle"></i>');
+      $('#deleteButtonNav').removeClass('text-danger');
+      $('.cardButton').removeClass('bg-danger text-white');
+      $('.trashLogo').remove();
+      $('.cardButton').off('click').on('click', function(e) {
+        e.stopPropagation(); // Prevent event bubbling to the parent element
+        const bookId = $(this).data('book-id');
+        window.location.href = '/player/' + bookId;
+      });
+    }
+  }
+
+  $('.cardButton').on('click', function(e) {
+    e.stopPropagation(); // Prevent event bubbling to the parent element
+    const bookId = $(this).data('book-id');
+    window.location.href = '/player/' + bookId;
+  });
