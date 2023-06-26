@@ -36,26 +36,29 @@
             <a class="nav-link" href="/sync"><i style="font-size:20px;" class="bi bi-gear"></i> SYNC</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" id="deleteButtonNav"><i style="font-size:20px;" class="bi bi-x-circle"></i> DELETE</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/import"><i style="font-size:20px;" class="bi bi-plus-circle"></i> ADD</a>
           </li>
         </ul>
     </div>
   </nav>
 
-  <div class="container">
+  <div class="container-fluid">
     <br><br><br>
     <hr>
     <div class="row" id="books-container">
       {% for book in audiobooks %}
-        <div class="col-md-3 mb-3">
-          <div class="card position-relative" onclick="location.href='/player/{{ book.id }}';" style="cursor: pointer;">
+        <div class="col-md-2 col-6 p-2">
+          <div class="card cardButton" style="cursor: pointer;" data-book-id="{{ book.id }}">
             {% if book.bookmark|int != 0 %}
               <i class="bi bi-bookmark-fill"></i>
             {% endif %}
             <img src="{{ book.cover }}" class="card-img-top book-cover" alt="Copertina">
             <div class="card-body">
               <h5 class="card-title">{{ book.title }}</h5>
-              <p class="card-text"><span>{{ book.author }}</span></p>
+                  <p class="card-text"><span>{{ book.author }}</span></p>
             </div>
           </div>
         </div>

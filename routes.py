@@ -4,12 +4,15 @@ import random
 import json
 import secrets
 import glob
-from utils import get_json
-from main import LIBRARY
+from utils import get_json, get_audiobook_from_id
+from main import auth
+import shutil
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 audiobooks = []
+audiobook_path = 'static/audiobooks'
 
 # Renders the index.html template and displays a list of audiobooks retrieved from the JSON file. 
 # It also reads the bookmark information for each audiobook if available.
@@ -73,6 +76,7 @@ def search_audiobooks():
 # Retrieves the audiobooks from the JSON file and returns them as a downloadable JSON file.
 
 @app.route('/json', methods=['GET'])
+@auth.login_required
 def list_audiobooks():
     audiobooks_file = get_json()
 
@@ -85,12 +89,13 @@ def list_audiobooks():
             response.headers.set('Content-Type', 'application/json')
             return response
 
-    return jsonify({'message': 'audiobooks.json not found. Please import new audiobooks or sync the audiobook folders.'}), 400, {'Refresh': '4; url=/'}
+    return jsonify({'message': 'audiobooks.json not found. Please wait...'}), 400, {'Refresh': '3; url=/'}
 
 
 # Renders the import.html template, which is a page for importing new audiobooks.
 
 @app.route('/import')
+@auth.login_required
 def import_page():    
     return render_template('import.html')
 
@@ -99,16 +104,23 @@ def import_page():
 # Saves the audio file, cover images, and updates the audiobooks JSON file with the new audiobook information.
 
 @app.route('/api/import', methods=['POST'])
+@auth.login_required
 def import_audiobook():
     title = request.form.get('title')
     author = request.form.get('author')
     audio_file = request.files.get('audio')
     cover_files = request.files.getlist('cover')
 
-    if len(cover_files) > 5:
-        return jsonify({'message': 'Hey! too many covers. 5 or less. Please wait...'}), 400, {'Refresh': '4; url=/import'}
+    # Some basic input hardening
+    audio_file.filename = secure_filename(audio_file.filename)
+    audio_extensions = ['.mp3', '.m4a', '.wav', '.ogg']
+    if not audio_file.filename.endswith(tuple(audio_extensions)):
+        return jsonify({'message': 'Hey! This is not a valid file extension. Please wait...'}), 400, {'Refresh': '3; url=/import'}
 
-    audiobooks_path = LIBRARY
+    if len(cover_files) > 5:
+        return jsonify({'message': 'Hey! too many covers. 5 or less. Please wait...'}), 400, {'Refresh': '3; url=/import'}
+
+    audiobooks_path = audiobook_path
     folder_name = f"{title} - {author}"
     folder_path = os.path.join(audiobooks_path, folder_name)
 
@@ -129,13 +141,14 @@ def import_audiobook():
 # Reads the audio files, cover images, and bookmark information from each folder and updates the audiobooks JSON file.
 
 @app.route('/sync', methods=['GET'])
+@auth.login_required
 def sync_books():
     json_file = 'audiobooks.json'
 
     if os.path.exists(json_file):
         os.remove(json_file)
 
-    audiobooks_path = LIBRARY
+    audiobooks_path = audiobook_path
     audiobooks = []
 
     for folder_name in os.listdir(audiobooks_path):
@@ -192,42 +205,29 @@ def sync_books():
 
 @app.route('/player/<audiobook_id>', methods=['GET'])
 def player(audiobook_id):
-    audiobook = None
-    audiobooks_file = get_json()
+    audiobook = get_audiobook_from_id(audiobook_id)
 
-    if os.path.exists(audiobooks_file):
-        with open(audiobooks_file, 'r') as f:
-            audiobooks_data = json.load(f)
+    cover_paths = audiobook['folder']['cover_paths']
+    random_cover = random.choice(cover_paths)
+    random_cover_path = os.path.join('/', random_cover)
 
-            for audiobook_data in audiobooks_data['audiobooks']:
-                if audiobook_data['id'] == audiobook_id:
-                    audiobook = audiobook_data
-                    break
+    audio_path = audiobook['folder']['audio_path']
+    audio_path_full = os.path.join('/static', os.path.relpath(audio_path, 'static'))
 
-        if audiobook:
-            cover_paths = audiobook['folder']['cover_paths']
-            random_cover = random.choice(cover_paths)
-            random_cover_path = os.path.join('/', random_cover)
+    bookmark_file = os.path.join(audiobook['folder']['path'], 'bookmark.txt')
+    bookmark = 0
 
-            audio_path = audiobook['folder']['audio_path']
-            audio_path_full = os.path.join('/static', os.path.relpath(audio_path, 'static'))
+    if os.path.exists(bookmark_file):
+        with open(bookmark_file, 'r') as f:
+            bookmark = float(f.read())
 
-            bookmark_file = os.path.join(audiobook['folder']['path'], 'bookmark.txt')
-            bookmark = 0
-
-            if os.path.exists(bookmark_file):
-                with open(bookmark_file, 'r') as f:
-                    bookmark = float(f.read())
-
-            return render_template('player.html',
-                                 bookmark=bookmark,
-                                 book_id=audiobook['id'],
-                                 random_cover=random_cover_path,
-                                 title=audiobook['title'],
-                                 author=audiobook['author'],
-                                 audio_path=audio_path_full)
-    else:
-        return jsonify({'message': 'Audiobook not found'}), 500
+    return render_template('player.html',
+                            bookmark=bookmark,
+                            book_id=audiobook['id'],
+                            random_cover=random_cover_path,
+                            title=audiobook['title'],
+                            author=audiobook['author'],
+                            audio_path=audio_path_full)
 
 # Receives a POST request with the audiobook ID and current playback time. 
 # Updates the bookmark file for the specified audiobook with the current playback time.
@@ -237,25 +237,25 @@ def save_playback_position():
     audiobook_id = request.form.get('audiobookId')
     current_time = float(request.form.get('currentTime'))
 
-    audiobooks_file = get_json()
+    audiobook = get_audiobook_from_id(audiobook_id)
+    path = audiobook['folder']['path']
+    bookmark_file = os.path.join(path, 'bookmark.txt')
 
-    if os.path.exists(audiobooks_file):
-        with open(audiobooks_file, 'r') as f:
-            audiobooks_data = json.load(f)
+    with open(bookmark_file, 'w') as f:
+        f.write(str(current_time))
+    return jsonify({'success': True})
+    
 
-            for audiobook_data in audiobooks_data['audiobooks']:
-                if audiobook_data['id'] == audiobook_id:
-                    path = audiobook_data['folder']['path']
-                    bookmark_file = os.path.join(path, 'bookmark.txt')
+# Receive a GET request with the audiobook ID.
+# Delete the audiobook folder. 
+    
+@app.route('/delete/<audiobook_id>', methods=['GET'])
+@auth.login_required
+def delete(audiobook_id):
+    audiobook = get_audiobook_from_id(audiobook_id)
 
-                    with open(bookmark_file, 'w') as f:
-                        f.write(str(current_time))
-
-                    break
-
-        with open(audiobooks_file, 'w') as f:
-            json.dump(audiobooks_data, f, indent=4)
-
-        return jsonify({'success': True})
+    if audiobook:
+        shutil.rmtree(audiobook['folder']['path'], ignore_errors=True)
+        return jsonify({'message': 'Audiobook deleted. Please wait...'}), 200, {'Refresh': '2; url=/sync'}
     else:
-        return jsonify({'error': 'Audiobook not found'}), 500
+        return jsonify({'message': 'Audiobook ID not found. Please wait...'}), 400, {'Refresh': '3; url=/'}
