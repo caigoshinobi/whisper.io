@@ -51,7 +51,7 @@ python main.py --port 1234 --ip 192.168.10.100
 
 ## Authentication
 
-Although whisper.io is publicly accessible for reading, some management features of the web application are protected by basic authentication (e.g., `⚙️SYNC`, `➕ADD`, `✖️DELETE`, ...). 
+Although Whisper.io is publicly accessible for reading, some management features of the web application are protected by basic authentication (e.g., `⚙️SYNC`, `➕ADD`, `✖️DELETE`, ...). 
 
 The default credentials are `admin:whisper`, but they can be changed by modifying the `main.py` file:
 
