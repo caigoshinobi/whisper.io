@@ -1,4 +1,4 @@
-# ![whisper.io Logo](https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/logo.png) Whisper.io
+# <img src="https://raw.githubusercontent.com/caigoshinobi/whisper.io/main/static/img/logo.png" height="50" width="50">Whisper.io
 
 Whisper.io is an audiobook library written in Flask that allows you to manage your audiobooks. 
 
